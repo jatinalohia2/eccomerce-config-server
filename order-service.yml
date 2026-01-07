@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: order-service
+
+  #  data base config :
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order-service
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  #  hibernate & jpa
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    defer-datasource-initialization: true
+
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: NEVER
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+# resilience config for retry logic :
+
+resilience4j:
+  retry:
+    instances:
+      inventoryFallback:
+        maxAttempts: 3
+        waitDuration: 5s
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - feign.FeignException
+
+  ratelimiter:
+    instances:
+      orderRateLimiter:
+        limit-for-period: 1
+        limit-refresh-period: 5s
+        timeout-duration: 10ms # make this in product as low like 0s
+
+  circuitbreaker:
+    instances:
+      orderCircuitBreaker:
+        register-health-indicator: true # /actuator/health pe OPEN / CLOSED / HALF_OPEN status milega
+        sliding-window-size: 10 # 10 call observation at least :
+        failure-rate-threshold: 50 # 50 % or more then will go again in the open state :
+        wait-duration-in-open-state: 10000 # after 10 sec again go in the half open state for checking :
+        permitted-number-of-calls-in-half-open-state: 5
+        sliding-window-type: COUNT_BASED
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        event-consumer-buffer-size: 10
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+server:
+  port: 8080
+
+  servlet:
+    context-path: /orders
