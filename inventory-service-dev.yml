@@ -1,1 +1,2 @@
-deploy.env= development
+deploy:
+  env: development
