@@ -9,7 +9,9 @@ server:
 spring:
   application:
     name: inventory-service
-
+  profiles:
+    active:
+      - prod
   #  data base config :
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory-service
