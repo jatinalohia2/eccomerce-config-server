@@ -1,0 +1,50 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: api-gateway
+
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/orders/**  # this is path which is allow in the order service (means microservice):
+#            - Method= GET  # it means only get req. are allowed in this gateway
+#
+
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/v1/orders/**  # this is path which is allow in the order service (means microservice):
+#            - Method=GET  # it means only get req. are allowed in this gateway
+            - Method=GET,POST,PUT,PATCH,DELETE  # it means all req. are allowed in this gateway
+
+          filters:
+            - StripPrefix=1  # remove the first / url from this path : Path=v1/orders/**  -> this path still reads /orders/**
+                              # like in the url if i hit : (http://localhost:8082/v1/orders/core/showOrder) then this still works :
+            - AddRequestHeader=X-Request-header, jatin
+#            - RedirectTo=302, https://youtube.com
+
+        - id: inventory-service
+          uri: lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/inventory/**  # this is path which is allow in the order service (means microservice):
+            - Method=GET,POST,PUT,PATCH,DELETE  # it means all req. are allowed in this gateway
+          filters:
+            - name: InventoryLoggingFilter
+            - name: Authentication
+              args:
+                isEnabled: false
+
+            - name: Authorization
+              args:
+                roles: ADMIN,USER  # roles allowed to access inventory service
+
+jwt:
+  secret: a-string-secret-at-least-256-bits-long
