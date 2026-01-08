@@ -1,8 +1,8 @@
+variable: jatin
 deploy:
   env: default
 server:
   port: 8081
-variable: jatin
   servlet:
     context-path: /inventory
 
