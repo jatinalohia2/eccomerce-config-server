@@ -7,8 +7,6 @@ server:
     context-path: /inventory
 
 spring:
-  application:
-    name: inventory-service
   profiles:
     active:
       - dev
