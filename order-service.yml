@@ -72,4 +72,4 @@ server:
   port: 8080
 
   servlet:
-    context-path: /orders
+    context-path: /orders1
