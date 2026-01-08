@@ -1,19 +1,9 @@
 server:
   port: 8082
-  
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: order-service
-#          uri: lb://ORDER-SERVICE
-#          predicates:
-#            - Path=/orders/**  # this is path which is allow in the order service (means microservice):
-#            - Method= GET  # it means only get req. are allowed in this gateway
-#
+
+spring:
+  application:
+    name: api-gateway
 
   cloud:
     gateway:
@@ -21,30 +11,30 @@ eureka:
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/v1/orders/**  # this is path which is allow in the order service (means microservice):
-#            - Method=GET  # it means only get req. are allowed in this gateway
-            - Method=GET,POST,PUT,PATCH,DELETE  # it means all req. are allowed in this gateway
-
+            - Path=/v1/orders/**
+            - Method=GET,POST,PUT,PATCH,DELETE
           filters:
-            - StripPrefix=2  # remove the first / url from this path : Path=v1/orders/**  -> this path still reads /orders/**
-                              # like in the url if i hit : (http://localhost:8082/v1/orders/core/showOrder) then this still works :
+            - StripPrefix=2
             - AddRequestHeader=X-Request-header, jatin
-#            - RedirectTo=302, https://youtube.com
 
         - id: inventory-service
           uri: lb://INVENTORY-SERVICE
           predicates:
-            - Path=/inventory/**  # this is path which is allow in the order service (means microservice):
-            - Method=GET,POST,PUT,PATCH,DELETE  # it means all req. are allowed in this gateway
+            - Path=/inventory/**
+            - Method=GET,POST,PUT,PATCH,DELETE
           filters:
             - name: InventoryLoggingFilter
             - name: Authentication
               args:
                 isEnabled: false
-
             - name: Authorization
               args:
-                roles: ADMIN,USER  # roles allowed to access inventory service
+                roles: ADMIN,USER
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
 jwt:
   secret: a-string-secret-at-least-256-bits-long
