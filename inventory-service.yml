@@ -1,4 +1,4 @@
-variable: jatin
+variable: rashid
 deploy:
   env: default
 server:
