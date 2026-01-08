@@ -15,7 +15,7 @@ spring:
             - Method=GET,POST,PUT,PATCH,DELETE
           filters:
             - StripPrefix=2
-            - AddRequestHeader=X-Request-header, jatin
+            # - AddRequestHeader=X-Request-header, jatin
 
         - id: inventory-service
           uri: lb://INVENTORY-SERVICE
