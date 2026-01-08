@@ -22,14 +22,14 @@ spring:
           predicates:
             - Path=/inventory/**
             - Method=GET,POST,PUT,PATCH,DELETE
-          filters:
-            - name: InventoryLoggingFilter
-            - name: Authentication
-              args:
-                isEnabled: false
-            - name: Authorization
-              args:
-                roles: ADMIN,USER
+          # filters:
+          #   - name: InventoryLoggingFilter
+          #   - name: Authentication
+          #     args:
+          #       isEnabled: false
+          #   - name: Authorization
+          #     args:
+          #       roles: ADMIN,USER
 
 eureka:
   client:
