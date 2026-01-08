@@ -7,9 +7,6 @@ server:
     context-path: /inventory
 
 spring:
-  profiles:
-    active:
-      - dev
   #  data base config :
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory-service
